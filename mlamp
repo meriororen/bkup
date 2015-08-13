@@ -1,0 +1,31 @@
+#!/bin/sh
+
+GPIO=/usr/local/bin/gpio
+
+if [ $# -lt 2 ]; then
+	echo "usage: mlamp <room> [on|off]"
+	exit 1
+fi
+
+if [ "$1" = "bedroom" ]; then
+	ROOM=13
+elif [ "$1" = "kitchen" ]; then
+	ROOM=14
+else
+	echo "$1 is not valid room"
+	exit 1
+fi
+
+CURVAL="${GPIO} read ${ROOM}" 
+
+$GPIO mode $ROOM OUT 
+
+if [ "$2" = "on" ]; then
+	if [ `eval $CURVAL` = 0 ]; then
+		$GPIO write $ROOM 1
+	fi
+elif [ "$2" = "off" ]; then
+	if [ `eval $CURVAL` = 1 ]; then
+		$GPIO write $ROOM 0
+	fi
+fi
